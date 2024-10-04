@@ -11,18 +11,52 @@
   <center>
     <h1>Jogo de advinhar números</h1>
     <br><br>
-    Digite um número entre 1 e 100: 
+    <p>Fale um número entre 1 e 100:</p>
     <input type="text" id="x" autofocus>
     <p id="t">Tentativas: 0</p>
 
     <br><br>
     <input type="button" value ="Jogar" class="botao" onclick="testejogo()">
-
     <input type="button" value ="Gerar número novo" class="botao" onclick="geranumero()">
+    <input type="button" value="Falar número" onclick="startRecognition()">
     <p id="p"> </p>
-    </p>
-</center>
+  </center>
 
-<script src="js.js"></script>
+<script>
+let tentativas = 0;
+let numeroSecreto = Math.floor(Math.random() * 100) + 1;
+
+function geranumero() {
+  numeroSecreto = Math.floor(Math.random() * 100) + 1;
+  tentativas = 0;
+  document.getElementById("t").innerText = "Tentativas: " + tentativas;
+  document.getElementById("p").innerText = "";
+}
+
+function testejogo() {
+  const palpite = parseInt(document.getElementById("x").value);
+  tentativas++;
+  document.getElementById("t").innerText = "Tentativas: " + tentativas;
+  
+  if (palpite === numeroSecreto) {
+    document.getElementById("p").innerText = "Parabéns! Você acertou!";
+  } else if (palpite < numeroSecreto) {
+    document.getElementById("p").innerText = "Tente um número maior.";
+  } else {
+    document.getElementById("p").innerText = "Tente um número menor.";
+  }
+}
+
+function startRecognition() {
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = 'pt-BR';
+  recognition.onresult = function(event) {
+    const resultado = event.results[0][0].transcript;
+    document.getElementById("x").value = resultado;
+    testejogo();
+  };
+  recognition.start();
+}
+</script>
 </body>
 </html>
